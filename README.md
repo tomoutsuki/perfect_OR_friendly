@@ -25,10 +25,9 @@ Ao final, os tempos de execução de cada abordagem são comparados em diferente
 
 ### ・Integrantes
 
-Projeto realizado por um grupo de 5 integrantes:
+Projeto realizado por um grupo de 4 integrantes:
 - Emily Miho Yoshizawa
 - Guilherme Mauricio Aguero Giaciani
-- João Vitor Briganti Laneiro
 - Mateus Amorim de Oliveira
 - Tom Outsuki
 
