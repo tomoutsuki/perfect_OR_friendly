@@ -1,6 +1,9 @@
 import socket
 import pickle
 import threading
+import time
+import csv
+from datetime import datetime
 
 # Definição de host do servidor como "localhost:12345".
 HOST = 'localhost'
@@ -47,7 +50,8 @@ def executar_distribuicao(inicio, fim, num_clients):
             print(f"Cliente conectado: {addr}")
 
         print("Iniciando distribuição de intervalos.")
-
+        # Marcar início do tempo de execução
+        tempo_inicio = time.time()
         # Contagem de números para cada intervalos em faixas
         step = (fim - inicio + 1) // num_clients
         # (ex: 1-10000 para 4 clientes, cada cliente fica com 2500 números para verificar)
@@ -73,6 +77,10 @@ def executar_distribuicao(inicio, fim, num_clients):
         for t in threads:
             t.join()
 
+        # Marcar fim do tempo de execução
+        tempo_fim = time.time()
+        tempo_execucao = tempo_fim - tempo_inicio
+
         # Array para armazenar resultados.
         numeros_perfeitos = []
         pares_amigaveis = []
@@ -83,17 +91,57 @@ def executar_distribuicao(inicio, fim, num_clients):
             pares_amigaveis.extend(res['pares_amigaveis'])
 
         print("\n=== RESULTADOS AGREGADOS ===")
+        print(f"Tempo de execução: {tempo_execucao:.4f} segundos")
         print("Números perfeitos encontrados:", sorted(set(numeros_perfeitos)))
         print("Pares amigáveis encontrados:", sorted(set(map(tuple, map(sorted, pares_amigaveis)))))
 
+        return {
+            'intervalo': f"{inicio}-{fim}",
+            'quantidade_clientes': num_clients,
+            'tempo_execucao': tempo_execucao
+        }
+
+def salvar_csv(resultados, nome_arquivo=None):
+    """Salva os resultados em um arquivo CSV"""
+    if nome_arquivo is None:
+        nome_arquivo = f"resultados_performance.csv"
+    
+    with open(nome_arquivo, 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['intervalo', 'tempo_execucao']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        writer.writeheader()
+        for resultado in resultados:
+            linha_csv = {
+                'intervalo': resultado['intervalo'],
+                'tempo_execucao': resultado['tempo_execucao']
+            }
+            writer.writerow(linha_csv)
 
 def main():
     num_clients = int(input("Número de clientes esperados: "))
+    
+    # Lista para armazenar todos os resultados
+    todos_resultados = []
 
     # Executar a função com 3 intervalos diferentes
-    executar_distribuicao(1, 100000, num_clients)
-    executar_distribuicao(1, 500000, num_clients)
-    executar_distribuicao(1, 1000000, num_clients)
+    resultado1 = executar_distribuicao(1, 100000, num_clients)
+    todos_resultados.append(resultado1)
+
+    resultado2 = executar_distribuicao(1, 250000, num_clients)
+    todos_resultados.append(resultado2)
+    
+    resultado3 = executar_distribuicao(1, 500000, num_clients)
+    todos_resultados.append(resultado3)
+    
+    resultado4 = executar_distribuicao(1, 750000, num_clients)
+    todos_resultados.append(resultado4)
+
+    resultado5 = executar_distribuicao(1, 1000000, num_clients)
+    todos_resultados.append(resultado5)
+    
+    # Salvar resultados em CSV
+    salvar_csv(todos_resultados)
 
 if __name__ == "__main__":
     main()

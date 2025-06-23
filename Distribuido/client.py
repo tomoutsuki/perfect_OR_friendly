@@ -1,6 +1,6 @@
 import socket
 import pickle
-from perfect_or_friendly_dist import analisar_intervalo # Carregar lógica de solução da abordagem sequencial
+from perfect_or_friendly_seq import analisar_intervalo # Carregar lógica de solução da abordagem sequencial
 
 # Definição de host do servidor como "localhost:12345"
 HOST = 'localhost'
